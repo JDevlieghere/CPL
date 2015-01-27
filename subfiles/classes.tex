@@ -32,8 +32,48 @@
              )))))
 \end{lstlisting}
 
-\subsection{Static Calls}
-
 \subsection{Field Getters \& Setters}
+
+\begin{lstlisting}
+;; Update datatype in syntax.rkt
+(define-datatype expression expression?
+  ...
+ (fieldset-exp
+   (obj-exp expression?)
+   (field-name symbol?)
+   (field-exp? expression?))
+  (fieldref-exp
+   (obj-exp expression?)
+   (field-name symbol?)))
+
+;; Add expressions to value-of
+(define value-of
+  (lambda (exp env)
+    (cases expression exp
+      ...
+      (fieldset-exp (obj-exp field-name field-exp)
+                    (let* ((obj (value-of obj-exp env))
+                          (field-ref (lookup-field obj field-name))
+                          (field-val (value-of field-exp env)))
+                      (begin
+                        (setref! field-ref field-val)
+                        (num-val 0))))
+      (fieldref-exp (obj-exp field-name)
+                    (let ((obj (value-of obj-exp env)))
+                      (value-of (deref (lookup-field field-name)))))
+
+      )))
+
+;; Helper function for obtaining reference to given field
+;; lookup field name: Obj * Symbol -> Ref
+(define lookup-field
+  (lambda (obj field-name)
+    (let* ((fields (object->fields obj))
+           (class-name (object->class-name obj))
+           (class (lookup-class class-name))
+           (field-names (class->field-names class))
+           (env (extend-env field-names fields (empty-env))))
+           (apply-env env field-name))))
+\end{lstlisting}
 
 \end{document}
