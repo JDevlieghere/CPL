@@ -1,1 +1,0 @@
-("6.1.1" ("1f6a4189aaee9ace2330aeaf6fac1c059dd4dc19" . "fc7bf7dee204e37002fcf61bf936d427a41744ac") (collects #"eopl" #"main.rkt") (collects #"racket" #"main.rkt") (collects #"eopl" #"lang" #"reader.rkt"))
