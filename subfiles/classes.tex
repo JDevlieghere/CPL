@@ -3,6 +3,35 @@
 
 \subsection{Instanceof Operator}
 
+\begin{lstlisting}
+(define-datatype expression expression?
+  ...
+  (instanceof-exp
+   (obj-exp expression?)
+   (class-name symbol?)))
+
+
+(define value-of
+  (lambda (exp env)
+    (cases expression exp
+      ...
+      (instanceof-exp (obj-exp class-name)
+                       (let ((obj (value-of obj-exp env)))
+                         (instanceof (object->class-name obj) class-name)))
+      )))
+
+;; Invalid instaceof
+(define instanceof
+  (lambda(obj-class-name class-name)
+      (if (equal? obj-class-name class-name)
+          #t
+          (if (equal? obj-class-name 'object)
+              #f
+              (let ((class (lookup-class obj-class-name)))
+                (instanceof (class->super-name class) class-name)
+             )))))
+\end{lstlisting}
+
 \subsection{Static Calls}
 
 \subsection{Field Getters \& Setters}

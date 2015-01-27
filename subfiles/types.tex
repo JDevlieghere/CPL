@@ -1,4 +1,99 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
 
+\subsection{Type Signatures}
+
+\begin{lstlisting}
+int
+
+2
+
+(define p1 (a-program (const-exp 2)))
+\end{lstlisting}
+
+
+\begin{lstlisting}
+(int -> int) -> (int ->bool)
+
+proc(x:?)
+    proc(y:?)
+        zero? ((x 0) - y)
+
+(define ex1
+    (a-program
+      (proc-exp 'x (no-type)
+        (proc-exp 'y (no-type)
+         (zero?-exp
+           (diff-exp
+             (call-exp
+               (var-exp 'x)
+               (const-exp 0))
+             (var-exp 'y)))))))
+\end{lstlisting}
+
+\begin{lstlisting}
+(int->int) -> (bool->bool)
+
+proc(x:?)
+    proc(y:?)
+        if y
+        then zero? ((x 0) - 10)
+        else zero? ((x 0) - 0)
+
+(define ex2
+  (a-program
+   (proc-exp 'x (no-type)
+             (proc-exp 'y (no-type)
+                       (if-exp (var-exp 'y)
+                               (zero?-exp (diff-exp
+                                           (call-exp (var-exp 'x) (const-exp 0))
+                                           (const-exp 10)))
+                               (zero?-exp (diff-exp
+                                           (call-exp (var-exp 'x) (const-exp 0))
+                                           (const-exp 0))))))))
+\end{lstlisting}
+
+\begin{lstlisting}
+%1
+
+letrec ? f(x:?) = (f x) in (f 3)
+
+(define ex3
+  (a-program
+   (letrec-exp (no-type) ; Proc return type
+               'f ; Proc name
+               'x ; Proc arg name
+               (no-type) ; Proc arg type
+               (call-exp (var-exp 'f) (var-exp 'x)) ; Proc arg body
+               (call-exp (var-exp 'f) (const-exp 3))))) ; Letrec body, type of f.
+
+\end{lstlisting}
+
+\begin{lstlisting}
+(%1 -> %2) -> (%2 -> int) -> (%1 -> bool)
+\end{lstlisting}
+
+\begin{lstlisting}
+%1 -> %2
+
+letrec ? f(x:?) = (f x) in f
+
+(define ex5
+  (a-program
+   (letrec-exp (no-type) ; Proc return type
+               'f ; Proc name
+               'x ; Proc arg name
+               (no-type) ; Proc arg type
+               (call-exp (var-exp 'f) (var-exp 'x)) ; Proc arg body
+               (var-exp 'f)))) ; Letrec body, a function
+
+
+\end{lstlisting}
+
+\begin{lstlisting}
+(%1 -> %2) -> %1
+\end{lstlisting}
+
+\subsection{CHECKED Tuple Extension}
+
 \end{document}
