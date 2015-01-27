@@ -29,8 +29,47 @@ let a = newref(newref(newref(0))) in
 \end{lstlisting}
 
 \begin{lstlisting}
+Evaluating let-exp
+Evaluating newref-exp
+Evaluating newref-exp
+Evaluating const-exp
+Return 0
+[(0,0)]
+Return 1
+[(1,0),(0,0)]
+Return 2
+[(2,1),(1,0),(0,0)]
+Evaluating let-exp
+Evaluating proc-exp
+Return (proc-val 'l (begin-exp (setref-exp (deref-exp (deref-exp (var-exp 'l))) (const-exp 1)) (list (deref-exp (varxp 'l)))))
+Evaluating deref-exp
+Evaluating call-exp
+Evaluating var-exp
+Return (proc-val 'l (begin-exp (setref-exp (deref-exp (deref-exp (var-exp 'l))) (const-exp 1)) (list (deref-exp (varxp 'l)))))
+Evaluating var-exp
+Return 2
+Apply procedure
+Evaluating begin-exp
+Evaluating setref-exp
+Evaluating deref-exp
+Evaluating deref-exp
+Evaluating var-exp
+Return 2
+Return 1
+Return 0
+Evaluating const-exp
+Return 1
+Evaluating deref-exp
+Evaluating var-exp
+Evaluating 2
+Return 1
+\end{lstlisting}
+
+\begin{lstlisting}
 #(ref-val 0)
 \end{lstlisting}
+
+
 
 \begin{lstlisting}
 ((0 #(num-val 1))
