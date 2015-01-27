@@ -1,0 +1,1 @@
+("6.1.1" ("2c7d844d18d37a1075fad8874743ed209a2a7b92" . "29ee4bb461adbef8c8eac6c4ae59faae18f27e3a") #"C:\\Users\\Jonas\\cpl-print\\chapter4\\IMPLICIT-REFS\\syntax.rkt" (collects #"eopl" #"main.rkt") #"C:\\Users\\Jonas\\cpl-print\\chapter4\\IMPLICIT-REFS\\store.rkt" (collects #"eopl" #"lang" #"reader.rkt"))

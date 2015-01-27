@@ -1,0 +1,78 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\subsection{Scoping}
+
+\begin{lstlisting}
+;; The variable 'd is the number that should be doubled.
+;; Should return d*2 for normal (static scoping) LETREC
+;; Should return 0 for dynamics scoping LETREC
+
+let d = 6
+in let f = proc(x)
+  let z = 1 in proc(w)
+      if zero? z
+          then 0
+          else letrec double(x) = if zero? x
+                                  then 0
+                                  else ((double (x - 1)) - -2)
+               in (double x)
+  in let z = 0 in ((f d) 0)
+\end{lstlisting}
+
+\subsubsection{Static Scoping}
+With static or lexical scoping, a procedure value should capture (close over) the definition time environment. The
+resulting value is called a closure.
+
+\begin{lstlisting}
+#(struct:num-val 12)
+\end{lstlisting}
+
+\subsubsection{Dynamic Scoping}
+With dynamic scoping, the client of a firstclass function value needs to know the name of every free variable in that
+function value. Dynamic scoping causes danger of accidental name clashes, but can be useful for configuring a function.
+
+\begin{lstlisting}
+#(struct:num-val 0)
+\end{lstlisting}
+
+\subsection{LEXADDR}
+
+\begin{lstlisting}
+let g = proc(x) let y =x
+    in proc(z) (x-(y-z)
+in ((g 1) 1)
+\end{lstlisting}
+
+\begin{lstlisting}
+(define p
+  (a-program
+   (let-exp 'g
+    (proc-exp 'x
+      (let-exp 'y
+        (var-exp 'x)
+        (proc-exp 'z (diff-exp (var-exp 'x) (diff-exp (var-exp 'y) (var-exp 'z))))))
+    (call-exp (call-exp (var-exp 'g) (const-exp 1)) (const-exp 1)))))
+\end{lstlisting}
+
+Translation rules:
+\begin{itemize}
+    \item Every \texttt{var-exp} is replaced by a \texttt{nameless-var-exp} with the right lexical address.
+    \item Every \texttt{let-exp} is replaced by a \texttt{nameless-let-exp}.
+    \item Every \texttt{proc-exp} is replaced by a \texttt{namesless-proc-exp}.
+\end{itemize}
+
+\begin{lstlisting}
+(define nameless-p
+  (a-program
+   (nameless-let-exp
+     (nameless-proc-exp
+       (nameless-let-exp
+         (nameless-var-exp 1)
+         (nameless-proc-exp (diff-exp (nameless-var-exp 2)
+                            (diff-exp (nameless-var-exp 1)
+                                      (nameless-var-exp 0))))))
+     (call-exp (call-exp (nameless-var-exp 0) (const-exp 1)) (const-exp 1)))))
+\end{lstlisting}
+
+\end{document}

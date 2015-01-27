@@ -1,0 +1,1 @@
+("6.1.1" ("790fe77482f069850f7cece6db2231878c273c0d" . "abd968358bda672d294cd3fb2b9b6d7dd0cca0e0") (collects #"eopl" #"main.rkt") #"C:\\Users\\Jonas\\cpl-print\\chapter9\\CLASSES\\store.rkt" #"C:\\Users\\Jonas\\cpl-print\\chapter9\\CLASSES\\syntax.rkt" (collects #"eopl" #"lang" #"reader.rkt"))

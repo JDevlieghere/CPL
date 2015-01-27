@@ -1,0 +1,186 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+
+\subsection{EXPLICIT-REFS}
+
+\begin{lstlisting}
+let a = newref(newref(newref(0))) in
+      let f = proc(l)
+          begin
+            setref(deref(deref(l)),l);
+            deref(l)
+          end in
+      deref((fa))
+\end{lstlisting}
+
+\begin{lstlisting}
+(define ex
+  (a-program
+   (let-exp 'a
+            (newref-exp (newref-exp (newref-exp (const-exp 0))))
+            (let-exp 'f
+                     (proc-exp 'l
+                               (begin-exp (setref-exp (deref-exp (deref-exp (var-exp 'l)))
+                                                      (const-exp 1))
+                                          (list (deref-exp (var-exp 'l)))))
+                     (deref-exp (call-exp (var-exp 'f)
+                                          (var-exp 'a)))))))
+\end{lstlisting}
+
+\begin{lstlisting}
+#(ref-val 0)
+\end{lstlisting}
+
+\begin{lstlisting}
+((0 #(num-val 1))
+ (1 #(ref-val 0))
+ (2 #(ref-val 1)))
+\end{lstlisting}
+
+\subsection{IMPLICIT-REFS}
+
+\begin{lstlisting}
+let d = let f = proc(x) x
+      in proc(g) begin f:=g; (f 1) end
+in (d (proc(x)2))
+\end{lstlisting}
+
+\begin{lstlisting}
+(define ex
+  (a-program
+   (let-exp 'd
+            (let-exp 'f
+                     (proc-exp 'x (var-exp 'x))
+                     (proc-exp 'g (begin-exp
+                                    (assign-exp 'f (var-exp 'g))
+                                    (list (call-exp (var-exp 'f) (const-exp 1))))))
+            (call-exp (var-exp 'd) (proc-exp 'x (const-exp 2))))))
+\end{lstlisting}
+
+\begin{lstlisting}
+Evaluating let-exp
+Evaluating let-exp
+Evaluating proc-exp
+Return (proc-val 'x (var-exp 'x))
+[(0, (proc-val 'x (var-exp 'x)  []))]r and [f = 0]s
+Evaluating proc-exp
+Return (proc-exp 'g (begin-exp (assign-exp 'f (var-exp 'g)) (list (call-exp (var-exp 'f) (const-exp 1))))))
+[(1, (proc-exp 'g (begin-exp (assign-exp 'f (var-exp 'g)) (list (call-exp (var-exp 'f) (const-exp 1)))))) [f = 0]), (0, (proc-val 'x (var-exp 'x)  []))] and [d=1, f=0]r
+Evaluating call-exp
+Evaluating var-exp
+Return (proc-exp 'g (begin-exp (assign-exp 'f (var-exp 'g)) (list (call-exp (var-exp 'f) (const-exp 1)))))) [f = 0])
+Evaluating proc-exp
+Return (proc-val 'x (const-exp 2))
+Apply procedure
+[(2,  (proc-val 'x (const-exp 2) [d=1]))(1, (proc-exp 'g (begin-exp (assign-exp 'f (var-exp 'g)) (list (call-exp (var-exp 'f) (const-exp 1)))))) [f = 0]), (0, (proc-val 'x (var-exp 'x)  []))] and [g=2, d=1]r
+Evaluating begin-exp
+Evaluating assign-exp
+[(2,  (proc-val 'x (const-exp 2) [d=1])), (1, (proc-exp 'g (begin-exp (assign-exp 'f (var-exp 'g)) (list (call-exp (var-exp 'f) (const-exp 1)))))) [f = 0]), (0, (proc-val 'x (const-exp 2) [d=1]))] and [g=2, d=1]r
+Evaluating call-exp
+Evaluating var-exp
+Return (proc-val 'x (const-exp 2) [d=1]))
+Evaluating const-exp
+Return 1
+Apply procedure
+[(3, (const-exp 1))(2,  (proc-val 'x (const-exp 2) [d=1])), (1, (proc-exp 'g (begin-exp (assign-exp 'f (var-exp 'g)) (list (call-exp (var-exp 'f) (const-exp 1)))))) [f = 0]), (0, (proc-val 'x (const-exp 2) [d=1]))] and [g=2, d=1]r
+Evaluating const-exp
+Return 2
+\end{lstlisting}
+
+\begin{lstlisting}
+Evaluating let d = let f = proc(x)x in proc(g)begin f := g;(f 1) end in (d proc(x)2)
+    env [empty-env]
+    store ()
+Evaluating let f = proc(x)x in proc(g)begin f := g;(f 1) end
+    env [empty-env]
+    store ()
+Evaluating proc(x)x
+    env [empty-env]
+    store ()
+Evaluating proc(g)begin f := g;(f 1) end
+    env [f = 0, empty-env]
+    store ((0 #(proc-val #(procedure x #(var-exp x) #(empty-env)))))
+Evaluating (d proc(x)2)
+    env [d = 1, empty-env]
+    store ((0 #(proc-val #(procedure x #(var-exp x) #(empty-env))))
+      (1 #(proc-val #(procedure g #(begin-exp #(assign-exp f #(var-exp g)) (#(call-exp #(var-exp f) #(const-exp 1)))) #(extend-env f 0 #(empty-env))))))
+Evaluating d
+    env [d = 1, empty-env]
+    store ((0 #(proc-val #(procedure x #(var-exp x) #(empty-env))))
+      (1 #(proc-val #(procedure g #(begin-exp #(assign-exp f #(var-exp g)) (#(call-exp #(var-exp f) #(const-exp 1)))) #(extend-env f 0 #(empty-env))))))
+Evaluating proc(x)2
+    env [d = 1, empty-env]
+    store ((0 #(proc-val #(procedure x #(var-exp x) #(empty-env))))
+      (1 #(proc-val #(procedure g #(begin-exp #(assign-exp f #(var-exp g)) (#(call-exp #(var-exp f) #(const-exp 1)))) #(extend-env f 0 #(empty-env))))))
+Evaluating begin f := g;(f 1) end
+    env [g = 2, f = 0, empty-env]
+    store ((0 #(proc-val #(procedure x #(var-exp x) #(empty-env))))
+      (1 #(proc-val #(procedure g #(begin-exp #(assign-exp f #(var-exp g)) (#(call-exp #(var-exp f) #(const-exp 1)))) #(extend-env f 0 #(empty-env)))))
+      (2 #(proc-val #(procedure x #(const-exp 2) #(extend-env d 1 #(empty-env))))))
+Evaluating f := g
+    env [g = 2, f = 0, empty-env]
+    store ((0 #(proc-val #(procedure x #(var-exp x) #(empty-env))))
+      (1 #(proc-val #(procedure g #(begin-exp #(assign-exp f #(var-exp g)) (#(call-exp #(var-exp f) #(const-exp 1)))) #(extend-env f 0 #(empty-env)))))
+      (2 #(proc-val #(procedure x #(const-exp 2) #(extend-env d 1 #(empty-env))))))
+Evaluating g
+    env [g = 2, f = 0, empty-env]
+    store ((0 #(proc-val #(procedure x #(var-exp x) #(empty-env))))
+      (1 #(proc-val #(procedure g #(begin-exp #(assign-exp f #(var-exp g)) (#(call-exp #(var-exp f) #(const-exp 1)))) #(extend-env f 0 #(empty-env)))))
+      (2 #(proc-val #(procedure x #(const-exp 2) #(extend-env d 1 #(empty-env))))))
+Evaluating (f 1)
+    env [g = 2, f = 0, empty-env]
+    store ((0 #(proc-val #(procedure x #(const-exp 2) #(extend-env d 1 #(empty-env)))))
+      (1 #(proc-val #(procedure g #(begin-exp #(assign-exp f #(var-exp g)) (#(call-exp #(var-exp f) #(const-exp 1)))) #(extend-env f 0 #(empty-env)))))
+      (2 #(proc-val #(procedure x #(const-exp 2) #(extend-env d 1 #(empty-env))))))
+Evaluating f
+    env [g = 2, f = 0, empty-env]
+    store ((0 #(proc-val #(procedure x #(const-exp 2) #(extend-env d 1 #(empty-env)))))
+      (1 #(proc-val #(procedure g #(begin-exp #(assign-exp f #(var-exp g)) (#(call-exp #(var-exp f) #(const-exp 1)))) #(extend-env f 0 #(empty-env)))))
+      (2 #(proc-val #(procedure x #(const-exp 2) #(extend-env d 1 #(empty-env))))))
+Evaluating 1
+    env [g = 2, f = 0, empty-env]
+    store ((0 #(proc-val #(procedure x #(const-exp 2) #(extend-env d 1 #(empty-env)))))
+      (1 #(proc-val #(procedure g #(begin-exp #(assign-exp f #(var-exp g)) (#(call-exp #(var-exp f) #(const-exp 1)))) #(extend-env f 0 #(empty-env)))))
+      (2 #(proc-val #(procedure x #(const-exp 2) #(extend-env d 1 #(empty-env))))))
+Evaluating 2
+    env [x = 3, d = 1, empty-env]
+    store ((0 #(proc-val #(procedure x #(const-exp 2) #(extend-env d 1 #(empty-env)))))
+      (1 #(proc-val #(procedure g #(begin-exp #(assign-exp f #(var-exp g)) (#(call-exp #(var-exp f) #(const-exp 1)))) #(extend-env f 0 #(empty-env)))))
+      (2 #(proc-val #(procedure x #(const-exp 2) #(extend-env d 1 #(empty-env)))))
+      (3 #(num-val 1)))
+#(num-val 2)
+\end{lstlisting}
+
+\begin{lstlisting}
+ (0 #(proc-val
+        #(procedure x
+            #(const-exp 2)
+            #(extend-env d 4
+                #(extend-env i 0
+                    #(extend-env v 1
+                        #(extend-env x 2
+                            #(empty-env))))))))
+ (1 #(proc-val
+        #(procedure g
+            #(begin-exp
+                #(assign-exp f
+                    #(var-exp g))
+                (#(call-exp #(var-exp f) #(const-exp 1))))
+            #(extend-env f 3
+                #(extend-env i 0
+                    #(extend-env v 1
+                        #(extend-env x 2
+                            #(empty-env))))))))
+ (2 #(proc-val
+        #(procedure x
+            #(const-exp 2)
+            #(extend-env d 4
+                #(extend-env i 0
+                    #(extend-env v 1
+                        #(extend-env x 2
+                            #(empty-env))))))))
+ (3 #(num-val 1)))
+\end{lstlisting}
+
+\end{document}

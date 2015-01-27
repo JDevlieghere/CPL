@@ -1,0 +1,102 @@
+\documentclass[a4paper, 10pt, oneside]{article}
+
+% Essentials
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[hidelinks]{hyperref}
+\usepackage[tmargin=3cm, bmargin=3cm, lmargin=3cm, rmargin=3cm]{geometry}
+\usepackage[backend=bibtex,style=alphabetic,sorting=ynt]{biblatex}
+\usepackage{algorithmic}
+
+
+\addbibresource{main.bib}
+
+% Bibliography
+
+% Optional but useful
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{subfiles}
+\usepackage{enumitem}
+\usepackage{tabularx,booktabs,multirow}
+\usepackage{longtable}
+\usepackage{url}
+\usepackage{enumitem}
+\usepackage{lipsum}
+\usepackage{mdframed}
+\usepackage{csquotes}
+\usepackage[table]{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titling}
+\usepackage{listings}
+\usepackage{tikz}
+\usepackage{mathtools}
+
+% Fancy Header
+\pagestyle{fancy}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\fancyfoot{}
+
+% Indentation
+\setlength\parindent{0pt}
+
+% Title
+\title{CPL Notities}
+\date{\today}
+\author{\textbf{Jonas Devlieghere}}
+
+\setlist[description]{style=nextline}
+\setlength\parindent{0pt}
+\graphicspath{{figures/}{../figures/}}
+
+% Listings
+\lstset{
+	frame=single,
+	numbers=none,
+	tabsize=4,
+	captionpos=b,
+    basicstyle=\footnotesize\ttfamily
+    breakatwhitespace=true,
+    breaklines=true,
+    postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
+}
+
+\begin{document}
+
+% Title page
+\maketitle
+\newpage
+
+% Table of Contents
+\tableofcontents
+\newpage
+
+% Main Matter
+\section{Expressions}
+\subfile{subfiles/expressions.tex}
+
+\newpage
+\section{State}
+\subfile{subfiles/state.tex}
+
+\newpage
+\section{Continuations}
+\subfile{subfiles/continuiations.tex}
+
+\newpage
+\section{Types}
+\subfile{subfiles/types.tex}
+
+\newpage
+\section{Classes}
+\subfile{subfiles/classes.tex}
+
+\appendix
+
+\nocite{*}
+\printbibliography
+
+\end{document}
