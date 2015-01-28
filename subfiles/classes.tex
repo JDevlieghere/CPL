@@ -60,8 +60,7 @@
                         (num-val 0))))
       (fieldref-exp (obj-exp field-name)
                     (let ((obj (value-of obj-exp env)))
-                      (value-of (deref (lookup-field field-name)))))
-
+                      (deref (lookup-field field-name))))
       )))
 
 ;; Helper function for obtaining reference to given field
@@ -74,6 +73,64 @@
            (field-names (class->field-names class))
            (env (extend-env field-names fields (empty-env))))
            (apply-env env field-name))))
+\end{lstlisting}
+
+\subsection{Limited Bindings}
+
+\begin{lstlisting}
+(define initialize-class-decl!
+  (lambda (c-decl)
+    (cases class-decl c-decl
+           (a-class-decl (c-name s-name f-names m-decls)
+       (add-to-class-env!
+                            c-name
+                            (a-class s-name f-names
+                                     (merge-method-envs
+                                      (class->method-env (lookup-class s-name))
+                                      (method-decls->method-env
+                                       m-decls s-name f-names))))))))
+\end{lstlisting}
+
+\subsection{Contain Class not Name}
+
+\begin{lstlisting}
+;; Object contains class field instead of class-name
+(define-datatype object object?
+  (an-object
+   (class class?)
+   (fields (list-of reference?))))
+
+;; Return class rather than class name
+(define object->class
+  (lambda (obj)
+    (cases object obj
+      (an-object (class fields)
+                 class))))
+
+;; Change value-of to use find-obj-method
+(define value-of
+  (lambda (exp env)
+    (cases expression exp
+      ...
+      (method-call-exp (obj-exp method-name rands)
+                       (let ((args (values-of-exps rands env))
+                             (obj (value-of obj-exp env)))
+                         (apply-method
+                          (find-obj-method obj method-name)
+                          obj
+                          args)))
+      ...
+    )
+  )
+)
+
+;; find method from object rather than by class name
+(define find-obj-method
+  (lambda (obj name)
+    (let ((m-env (class->method-env (object->class obj))))
+      (let ((maybe-pair (assq name m-env)))
+        (if (pair? maybe-pair) (cadr maybe-pair)
+            (report-method-not-found name))))))
 \end{lstlisting}
 
 \end{document}

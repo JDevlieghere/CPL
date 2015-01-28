@@ -4,20 +4,17 @@
 \subsection{Type Signatures}
 
 \begin{lstlisting}
-int
-
-2
+;; int
+;; 2
 
 (define p1 (a-program (const-exp 2)))
 \end{lstlisting}
 
-
 \begin{lstlisting}
-(int -> int) -> (int ->bool)
-
-proc(x:?)
-    proc(y:?)
-        zero? ((x 0) - y)
+;; (int -> int) -> (int ->bool)
+;; proc(x:?)
+;;     proc(y:?)
+;;         zero? ((x 0) - y)
 
 (define ex1
     (a-program
@@ -32,13 +29,12 @@ proc(x:?)
 \end{lstlisting}
 
 \begin{lstlisting}
-(int->int) -> (bool->bool)
-
-proc(x:?)
-    proc(y:?)
-        if y
-        then zero? ((x 0) - 10)
-        else zero? ((x 0) - 0)
+;; (int->int) -> (bool->bool)
+;; proc(x:?)
+;;     proc(y:?)
+;;         if y
+;;         then zero? ((x 0) - 10)
+;;         else zero? ((x 0) - 0)
 
 (define ex2
   (a-program
@@ -54,9 +50,8 @@ proc(x:?)
 \end{lstlisting}
 
 \begin{lstlisting}
-%1
-
-letrec ? f(x:?) = (f x) in (f 3)
+;; %1
+;; letrec ? f(x:?) = (f x) in (f 3)
 
 (define ex3
   (a-program
@@ -70,13 +65,21 @@ letrec ? f(x:?) = (f x) in (f 3)
 \end{lstlisting}
 
 \begin{lstlisting}
-(%1 -> %2) -> (%2 -> int) -> (%1 -> bool)
+;; (%1 -> %2) -> (%2 -> int) -> (%1 -> bool)
+;; proc(f) proc(g) proc(x) (zero? (g (f x)))
+
+(define d
+  (a-program
+   (proc-exp 'f (no-type)
+             (proc-exp 'g (no-type)
+                       (proc-exp 'x (no-type)
+                                 (zero?-exp (call-exp (var-exp 'g)
+                                                      (call-exp (var-exp 'f) (var-exp 'x)))))))))
 \end{lstlisting}
 
 \begin{lstlisting}
-%1 -> %2
-
-letrec ? f(x:?) = (f x) in f
+;; %1 -> %2
+;;letrec ? f(x:?) = (f x) in f
 
 (define ex5
   (a-program
@@ -91,7 +94,23 @@ letrec ? f(x:?) = (f x) in f
 \end{lstlisting}
 
 \begin{lstlisting}
-(%1 -> %2) -> %1
+;; (%1 -> %2) -> %1
+;; proc (g) letrec f(x) = f x in let y = ( g ( f x) ) in (f x)
+
+(define f
+  (a-program
+   (proc-exp 'g
+             (no-type)
+             (letrec-exp (no-type)
+                         'f
+                         'x
+                         (no-type)
+                         (call-exp (var-exp 'f) (var-exp 'x))
+                         (let-exp 'y
+                                  (call-exp (var-exp 'g)
+                                            (call-exp (var-exp 'f)
+                                                      (var-exp 'x)))
+                                  (call-exp (var-exp 'f) (var-exp 'x)))))))
 \end{lstlisting}
 
 \subsection{CHECKED Tuple Extension}
